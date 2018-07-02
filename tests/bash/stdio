@@ -6,25 +6,25 @@ cd `dirname "$0"`/../..
 
 testState() {
     actual=`krab_stdio_state 'Hi, there!'`
-    expected="\n\033[0;47m  \033[0;1;37m Hi, there!\033[0m"
+    expected=`printf "\n\033[0;47m  \033[0;1;37m Hi, there!\033[0m"`
     assertEquals "$expected" "$actual"
 }
 
 testInform() {
     actual=`krab_stdio_inform 'Hi, there!'`
-    expected="\n\033[0;46m  \033[0;1;36m Hi, there!\033[0m"
+    expected=`printf "\n\033[0;46m  \033[0;1;36m Hi, there!\033[0m"`
     assertEquals "$expected" "$actual"
 }
 
 testConfirm() {
     actual=`krab_stdio_confirm 'Hi, there!'`
-    expected="\n\033[0;42m  \033[0;1;32m Hi, there!\033[0m"
+    expected=` printf "\n\033[0;42m  \033[0;1;32m Hi, there!\033[0m"`
     assertEquals "$expected" "$actual"
 }
 
 testAlert() {
     actual=`krab_stdio_alert 'Hi, there!'`
-    expected="\n\033[0;41m  \033[0;1;31m Hi, there!\033[0m"
+    expected=`printf "\n\033[0;41m  \033[0;1;31m Hi, there!\033[0m"`
     assertEquals "$expected" "$actual"
 }
 
