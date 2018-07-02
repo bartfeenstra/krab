@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd `dirname "$0"`/..
+
+. ./src/bash/stdio
+
+# Aggregate test results.
+total=0
+failures=0
+for test in ./tests/*/*; do
+    total=$((total + 1))
+    krab_stdio_state "Running test $test..."
+    set +e
+    $test && krab_stdio_state "TEST $test PASSED" || { failures=$((failures + 1)) && krab_stdio_state "TEST $test FAILED"; }
+    set -e
+done
+
+if [ $failures -eq 0 ]
+then
+    krab_stdio_state "SUCCESS: $total TEST(S) PASSED."
+    exit
+else
+    krab_stdio_alert "ERROR: $failures OUT OF $total TEST(S) FAILED."
+    exit 1
+fi
