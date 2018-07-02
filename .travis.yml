@@ -1,0 +1,9 @@
+sudo: required
+
+language: generic
+
+before_script:
+  - ./bin/build
+
+script:
+  - ./bin/test
