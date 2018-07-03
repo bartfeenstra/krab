@@ -2,7 +2,7 @@
 
 set -e
 
-cd `dirname "$0"`/..
+cd "$(dirname "$0")/.."
 
 . ./src/bash/stdio
 
@@ -13,13 +13,18 @@ for test in ./tests/*/*; do
     total=$((total + 1))
     krab_stdio_state "Running test $test..."
     set +e
-    $test && krab_stdio_state "TEST $test PASSED" || { failures=$((failures + 1)) && krab_stdio_state "TEST $test FAILED"; }
+    if $test; then
+        krab_stdio_confirm "TEST $test PASSED"
+     else
+        failures=$((failures + 1))
+        krab_stdio_alert "TEST $test FAILED"
+    fi
     set -e
 done
 
 if [ $failures -eq 0 ]
 then
-    krab_stdio_state "SUCCESS: $total TEST(S) PASSED."
+    krab_stdio_confirm "SUCCESS: $total TEST(S) PASSED."
     exit
 else
     krab_stdio_alert "ERROR: $failures OUT OF $total TEST(S) FAILED."
