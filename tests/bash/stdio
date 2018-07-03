@@ -1,30 +1,34 @@
 #!/usr/bin/env bash
 
-cd `dirname "$0"`/../..
+set -e
+
+cd "$(dirname "$0")/../.."
 
 . ./src/bash/stdio
 
+set +e
+
 testState() {
-    actual=`krab_stdio_state 'Hi, there!'`
-    expected=`printf "\n\033[0;47m  \033[0;1;37m Hi, there!\033[0m"`
+    actual=$(krab_stdio_state 'Hi, there!')
+    expected=$(printf "\n\033[0;47m  \033[0;1;37m Hi, there!\033[0m\n\n")
     assertEquals "$expected" "$actual"
 }
 
 testInform() {
-    actual=`krab_stdio_inform 'Hi, there!'`
-    expected=`printf "\n\033[0;46m  \033[0;1;36m Hi, there!\033[0m"`
+    actual=$(krab_stdio_inform 'Hi, there!')
+    expected=$(printf "\n\033[0;46m  \033[0;1;36m Hi, there!\033[0m\n\n")
     assertEquals "$expected" "$actual"
 }
 
 testConfirm() {
-    actual=`krab_stdio_confirm 'Hi, there!'`
-    expected=` printf "\n\033[0;42m  \033[0;1;32m Hi, there!\033[0m"`
+    actual=$(krab_stdio_confirm 'Hi, there!')
+    expected=$(printf "\n\033[0;42m  \033[0;1;32m Hi, there!\033[0m\n\n")
     assertEquals "$expected" "$actual"
 }
 
 testAlert() {
-    actual=`krab_stdio_alert 'Hi, there!'`
-    expected=`printf "\n\033[0;41m  \033[0;1;31m Hi, there!\033[0m"`
+    actual=$(krab_stdio_alert 'Hi, there!')
+    expected=$(printf "\n\033[0;41m  \033[0;1;31m Hi, there!\033[0m\n\n")
     assertEquals "$expected" "$actual"
 }
 

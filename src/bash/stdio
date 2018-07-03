@@ -2,8 +2,9 @@
 
 function _krab_stdio_message {
     message=$1
-    shade=$2
-    printf "\n\033[0;4${shade}m  \033[0;1;3${shade}m ${message}\033[0m\n\n"
+    highlight=$(( $2 + 40))
+    normal=$(( $2 + 30))
+    printf "\n\033[0;%dm  \033[0;1;%dm %s\033[0m\n\n" "$highlight" "$normal" "$message"
 }
 
 function krab_stdio_state {
