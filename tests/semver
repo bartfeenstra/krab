@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")/.." || exit
+
+. ./krab
+
+
+test_validate_should_validate_valid_version() {
+    krab_semver_validate '1.2.3'
+    assertEquals 0 "$?"
+}
+
+test_validate_should_not_validate_missing_component() {
+    krab_semver_validate '1.2' &>/dev/null
+    assertEquals 1 "$?"
+}
+
+test_validate_should_not_validate_invalid_component() {
+    krab_semver_validate '1.b.3' &>/dev/null
+    assertEquals 1 "$?"
+}
+
+test_components_should_return_components() {
+    actual=$(krab_semver_components '1.2.3')
+    assertEquals 0 "$?"
+    expected='1 1.2 1.2.3'
+    assertEquals "$expected" "$actual"
+}
+
+test_components_should_fail_on_invalid_version() {
+    krab_semver_components '1.2' &>/dev/null
+    assertEquals 1 "$?"
+}
+
+. ./vendor/shunit2/shunit2
