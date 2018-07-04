@@ -1,32 +1,28 @@
 #!/usr/bin/env bash
 
-set -e
+cd "$(dirname "$0")/.." || exit
 
-cd "$(dirname "$0")/../.."
+. ./krab
 
-. ./src/bash/stdio
-
-set +e
-
-testState() {
+test_state() {
     actual=$(krab_stdio_state 'Hi, there!' 2>&1 > /dev/null)
     expected=$(printf "\n\033[0;47m  \033[0;1;37m Hi, there!\033[0m\n\n")
     assertEquals "$expected" "$actual"
 }
 
-testInform() {
+test_inform() {
     actual=$(krab_stdio_inform 'Hi, there!' 2>&1 > /dev/null)
     expected=$(printf "\n\033[0;46m  \033[0;1;36m Hi, there!\033[0m\n\n")
     assertEquals "$expected" "$actual"
 }
 
-testConfirm() {
+test_confirm() {
     actual=$(krab_stdio_confirm 'Hi, there!' 2>&1 > /dev/null)
     expected=$(printf "\n\033[0;42m  \033[0;1;32m Hi, there!\033[0m\n\n")
     assertEquals "$expected" "$actual"
 }
 
-testAlert() {
+test_alert() {
     actual=$(krab_stdio_alert 'Hi, there!' 2>&1 > /dev/null)
     expected=$(printf "\n\033[0;41m  \033[0;1;31m Hi, there!\033[0m\n\n")
     assertEquals "$expected" "$actual"

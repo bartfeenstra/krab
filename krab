@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+_krab_stdio_message() {
+    message=$1
+    highlight=$(( $2 + 40))
+    normal=$(( $2 + 30))
+    printf "\n\033[0;%dm  \033[0;1;%dm %s\033[0m\n\n" "$highlight" "$normal" "$message"
+}
+
+krab_stdio_state() {
+    message=$1
+    _krab_stdio_message "$message" 7 1>&2
+}
+
+krab_stdio_inform() {
+    message=$1
+    _krab_stdio_message "$message" 6 1>&2
+}
+
+krab_stdio_confirm() {
+    message=$1
+    _krab_stdio_message "$message" 2 1>&2
+}
+
+krab_stdio_alert() {
+    message=$1
+    _krab_stdio_message "$message" 1 1>&2
+}
+
+krab_semver_components() {
+    version=$1
+    krab_semver_validate "$version" || return 1
+    components=(${version//\./ })
+    echo "${components[0]} ${components[0]}.${components[1]} $version"
+}
+
+krab_semver_validate() {
+    version=$1
+    if [[ ! $version =~ ^[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$ ]]; then
+        krab_stdio_alert "$version is not a valid Semantic Version (x.y.z). See https://semver.org/."
+        return 1
+    fi
+}

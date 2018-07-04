@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-set -e
+set -Eeuo pipefail
 
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/.."
 
-directories='./bin ./src/bash ./tests/bash'
+shellcheck -x ./krab
+directories='./bin ./tests'
 for directory in $directories; do
     find "$directory" | while read -r file; do
         if [ ! -f "$file" ]; then
@@ -13,4 +14,3 @@ for directory in $directories; do
         shellcheck -x "$file"
     done
 done
-shellcheck -x "$0"

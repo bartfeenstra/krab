@@ -1,25 +1,23 @@
 #!/usr/bin/env bash
 
-set -e
+set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-. ./src/bash/stdio
+. ./krab
 
 # Aggregate test results.
 total=0
 failures=0
-for test in ./tests/*/*; do
+for test in ./tests/*; do
     total=$((total + 1))
     krab_stdio_state "Running test $test..."
-    set +e
     if $test; then
         krab_stdio_confirm "TEST $test PASSED"
      else
         failures=$((failures + 1))
         krab_stdio_alert "TEST $test FAILED"
     fi
-    set -e
 done
 
 if [ $failures -eq 0 ]
