@@ -9,22 +9,22 @@ _krab_stdio_message() {
 
 krab_stdio_state() {
     message=$1
-    _krab_stdio_message "$message" 7
+    _krab_stdio_message "$message" 7 1>&2
 }
 
 krab_stdio_inform() {
     message=$1
-    _krab_stdio_message "$message" 6
+    _krab_stdio_message "$message" 6 1>&2
 }
 
 krab_stdio_confirm() {
     message=$1
-    _krab_stdio_message "$message" 2
+    _krab_stdio_message "$message" 2 1>&2
 }
 
 krab_stdio_alert() {
     message=$1
-    _krab_stdio_message "$message" 1
+    _krab_stdio_message "$message" 1 1>&2
 }
 
 krab_semver_components() {
