@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -Eeuo pipefail
+
 _krab_stdio_message() {
     local message
     message=$1
@@ -51,3 +53,45 @@ krab_semver_validate() {
         return 1
     fi
 }
+
+krab_run() {
+    local total
+    local failures
+
+    total=$#
+
+    # Aggregate results.
+    failures=0
+
+    for task in "$@"; do
+        krab_stdio_state "Running $task..."
+        if eval "$task"; then
+            krab_stdio_confirm "$task PASSED"
+         else
+            failures=$((failures + 1))
+            krab_stdio_alert "$task FAILED"
+        fi
+    done
+
+    if [ $failures -eq 0 ]
+    then
+        krab_stdio_confirm "SUCCESS: $total PASSED."
+        exit 0
+    else
+        krab_stdio_alert "ERROR: $failures OUT OF $total FAILED."
+        exit 1
+    fi
+}
+
+# This is our main functionality, and exposes our public API as subcommands.
+if [ -z "${1:-}" ]; then
+    krab_stdio_alert "Missing subcommand."
+    exit 2
+fi
+command=$1
+shift
+function="krab_$(echo "$command" | tr '-' '_')"
+if ! type -t "$function" >/dev/null || [ ! "$(type -t "$function")" = 'function' ]; then
+    exit 2
+fi
+$function "$@"

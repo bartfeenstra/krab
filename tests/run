@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")/.." || exit
+
+test_run_single_command() {
+    local expected
+    local cmd
+    local actual
+
+    expected='FoOBaRBaZQuX'
+    cmd="echo $expected"
+    actual=$(./krab run "$cmd" 2>/dev/null)
+    assertEquals "$expected" "$actual"
+}
+
+test_run_multiple_commands() {
+    local expected1
+    local expected2
+    local actual
+
+    expected1="FoOBaZ"
+    expected2='BaRQuX'
+    expected="$expected1$expected2"
+    actual="$(./krab run "printf $expected1" "printf $expected2" 2>/dev/null)"
+    assertEquals "$expected" "$actual"
+}
+
+. ./vendor/shunit2/shunit2
