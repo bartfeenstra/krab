@@ -4,4 +4,4 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-find ./tests | grep '^\./tests/[^/]*' | xargs ./krab run
+find ./tests | grep '^\./tests/[^/]*' | xargs ./krab run --fail-late

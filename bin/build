@@ -4,8 +4,4 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-mkdir -p ./vendor
-
-if [[ ! -d ./vendor/shunit2 ]]; then
-    git clone https://github.com/kward/shunit2.git ./vendor/shunit2
-fi
+find ./build | grep '^\./build/[^/]*' | xargs ./krab run
