@@ -9,8 +9,13 @@ test_run_single_command() {
 
     expected='FoOBaRBaZQuX'
     cmd="echo $expected"
-    actual=$(./krab run "$cmd" 2>/dev/null)
+    actual="$(./krab run "$cmd" 2>/dev/null)"
     assertEquals "$expected" "$actual"
+}
+
+test_run_single_failed_command() {
+    ./krab run 'foo-bar --baz --qux' 2>/dev/null
+    assertNotEquals 0 "$?"
 }
 
 test_run_multiple_commands() {
@@ -23,6 +28,11 @@ test_run_multiple_commands() {
     expected="$expected1$expected2"
     actual="$(./krab run "printf $expected1" "printf $expected2" 2>/dev/null)"
     assertEquals "$expected" "$actual"
+}
+
+test_run_multiple_failed_commands() {
+    ./krab run 'echo FooBar' 'foo-bar --baz --qux' 2>/dev/null
+    assertNotEquals 0 "$?"
 }
 
 . ./vendor/shunit2/shunit2
