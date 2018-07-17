@@ -37,8 +37,19 @@ test_run_multiple_failed_commands() {
 
     expected1="FoOBaZ"
     expected2='BaRQuX'
-    expected="$expected1$expected2"
     actual="$(./krab run "printf $expected1" 'foo-bar --baz --qux' "printf $expected2" 2>/dev/null)"
+    assertEquals "$expected1" "$actual"
+}
+
+test_run_multiple_failed_commands_with_allowed_failures() {
+    local expected1
+    local expected2
+    local actual
+
+    expected1="FoOBaZ"
+    expected2='BaRQuX'
+    expected="$expected1$expected2"
+    actual="$(./krab run --fail-late "printf $expected1" 'foo-bar --baz --qux' "printf $expected2" 2>/dev/null)"
     assertEquals "$expected" "$actual"
 }
 
