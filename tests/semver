@@ -21,8 +21,10 @@ test_validate_should_not_validate_invalid_component() {
 }
 
 test_components_should_return_components() {
+    local actual
     actual=$(krab_semver_components '1.2.3')
     assertEquals 0 "$?"
+    local expected
     expected='1 1.2 1.2.3'
     assertEquals "$expected" "$actual"
 }
