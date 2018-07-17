@@ -31,8 +31,15 @@ test_run_multiple_commands() {
 }
 
 test_run_multiple_failed_commands() {
-    ./krab run 'echo FooBar' 'foo-bar --baz --qux' 2>/dev/null
-    assertNotEquals 0 "$?"
+    local expected1
+    local expected2
+    local actual
+
+    expected1="FoOBaZ"
+    expected2='BaRQuX'
+    expected="$expected1$expected2"
+    actual="$(./krab run "printf $expected1" 'foo-bar --baz --qux' "printf $expected2" 2>/dev/null)"
+    assertEquals "$expected" "$actual"
 }
 
 . ./vendor/shunit2/shunit2
