@@ -4,8 +4,7 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-if [ "$#" -ne 1 ]
-then
+if [ "$#" -ne 1 ]; then
   echo "This command takes a single argument, which is the version to release."
   exit 2
 fi
