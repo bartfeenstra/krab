@@ -103,6 +103,7 @@ command=$1
 shift
 function="krab_$(echo "$command" | tr '-' '_')"
 if ! type -t "$function" >/dev/null || [ ! "$(type -t "$function")" = 'function' ]; then
+    krab_stdio_alert "Unknown command: $command"
     exit 2
 fi
 $function "$@"
