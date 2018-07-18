@@ -4,13 +4,24 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-shellcheck -x ./krab
-directories='./bin ./tests'
-for directory in $directories; do
-    find "$directory" | while read -r file; do
+failures=false
+while read -r pattern; do
+    while read -r file; do
         if [ ! -f "$file" ]; then
             continue
-         fi
-        shellcheck -x "$file"
-    done
-done
+        fi
+
+        if ! shellcheck -x "$file"; then
+            failures=true
+        fi
+    done < <(find ./ 2>/dev/null | grep "$pattern")
+done << 'EOF'
+^\./bin/[^/]*$
+^\./build/[^/]*
+^\./src/[^/]*
+^\./tests/[^/]*$
+EOF
+
+if $failures; then
+    exit 1
+fi
