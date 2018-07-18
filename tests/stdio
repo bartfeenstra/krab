@@ -8,19 +8,19 @@ test_state() {
     assertEquals "$expected" "$actual"
 }
 
-xtest_inform() {
+test_inform() {
     actual="$(./bin/krab stdio-inform 'Hi, there!' 2>&1 > /dev/null)"
     expected=$(printf "\n\033[0;46m  \033[0;1;36m Hi, there!\033[0m\n\n")
     assertEquals "$expected" "$actual"
 }
 
-xtest_confirm() {
+test_confirm() {
     actual="$(./bin/krab stdio-confirm 'Hi, there!' 2>&1 > /dev/null)"
     expected=$(printf "\n\033[0;42m  \033[0;1;32m Hi, there!\033[0m\n\n")
     assertEquals "$expected" "$actual"
 }
 
-xtest_alert() {
+test_alert() {
     actual="$(./bin/krab stdio-alert 'Hi, there!' 2>&1 > /dev/null)"
     expected=$(printf "\n\033[0;41m  \033[0;1;31m Hi, there!\033[0m\n\n")
     assertEquals "$expected" "$actual"
