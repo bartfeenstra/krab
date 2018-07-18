@@ -9,12 +9,12 @@ test_run_single_command() {
 
     expected='FoOBaRBaZQuX'
     cmd="echo $expected"
-    actual="$(./krab run "$cmd" 2>/dev/null)"
+    actual="$(./bin/krab run "$cmd" 2>/dev/null)"
     assertEquals "$expected" "$actual"
 }
 
 test_run_single_failed_command() {
-    ./krab run 'foo-bar --baz --qux' 2>/dev/null
+    ./bin/krab run 'foo-bar --baz --qux' 2>/dev/null
     assertNotEquals 0 "$?"
 }
 
@@ -26,7 +26,7 @@ test_run_multiple_commands() {
     expected1="FoOBaZ"
     expected2='BaRQuX'
     expected="$expected1$expected2"
-    actual="$(./krab run "printf $expected1" "printf $expected2" 2>/dev/null)"
+    actual="$(./bin/krab run "printf $expected1" "printf $expected2" 2>/dev/null)"
     assertEquals "$expected" "$actual"
 }
 
@@ -37,7 +37,7 @@ test_run_multiple_failed_commands() {
 
     expected1="FoOBaZ"
     expected2='BaRQuX'
-    actual="$(./krab run "printf $expected1" 'foo-bar --baz --qux' "printf $expected2" 2>/dev/null)"
+    actual="$(./bin/krab run "printf $expected1" 'foo-bar --baz --qux' "printf $expected2" 2>/dev/null)"
     assertEquals "$expected1" "$actual"
 }
 
@@ -49,7 +49,7 @@ test_run_multiple_failed_commands_with_allowed_failures() {
     expected1="FoOBaZ"
     expected2='BaRQuX'
     expected="$expected1$expected2"
-    actual="$(./krab run --fail-late "printf $expected1" 'foo-bar --baz --qux' "printf $expected2" 2>/dev/null)"
+    actual="$(./bin/krab run --fail-late "printf $expected1" 'foo-bar --baz --qux' "printf $expected2" 2>/dev/null)"
     assertEquals "$expected" "$actual"
 }
 
