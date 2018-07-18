@@ -1,23 +1,50 @@
 #!/usr/bin/env bash
 
 krab_run() {
-    local total
     local failures
     local fail_early
+    local last
+    local total
 
     fail_early=true
-    if [ "$1" = '--fail-early' ]; then
-        shift
-    elif [ "$1" = '--fail-late' ]; then
-        fail_early=false
-        shift
-    fi
+    usage=$(cat <<'EOF'
+Usage: $ ...run [OPTION]... [TASK]...
+
+TASK is one or more shell commands to run.
+
+OPTION is one or more of the following:
+    -l  Run all tasks, regardless of failures.
+
+Examples:
+    ...run 'echo "This prints something"' 'unknown-command --this-should-fail' 'echo "This does not print anything"'
+    ...run -l 'echo "This prints something"' 'unknown-command --this-should-fail' 'echo "This also prints something"'
+EOF
+)
+    while getopts 'lh' option; do
+        case "$option" in
+            l)
+                fail_early=false
+                ;;
+            h)
+                echo "$usage"
+                exit 0
+                ;;
+            ?)
+                echo "$usage"
+                exit 2
+                ;;
+        esac
+    done
+    shift "$((OPTIND-1))"
+
     total=$#
 
     # Aggregate results.
     failures=0
+    last=0
 
     for task in "$@"; do
+        last=$((last + 1))
         krab_stdio_state "Running $task..."
         if eval "$task"; then
             krab_stdio_confirm "$task PASSED"
@@ -35,7 +62,12 @@ krab_run() {
         krab_stdio_confirm "SUCCESS: $total PASSED."
         return 0
     else
-        krab_stdio_alert "ERROR: $failures OUT OF $total FAILED."
+        local message
+        message="ERROR: $failures OUT OF $total FAILED."
+        if [ $last -lt "$total" ]; then
+            message="$message $((last - 1)) PASSED. $((total - last)) SKIPPED."
+        fi
+        krab_stdio_alert "$message"
         return 1
     fi
 }
