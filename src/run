@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+krab_run() {
+    local total
+    local failures
+    local fail_early
+
+    fail_early=true
+    if [ "$1" = '--fail-early' ]; then
+        shift
+    elif [ "$1" = '--fail-late' ]; then
+        fail_early=false
+        shift
+    fi
+    total=$#
+
+    # Aggregate results.
+    failures=0
+
+    for task in "$@"; do
+        krab_stdio_state "Running $task..."
+        if eval "$task"; then
+            krab_stdio_confirm "$task PASSED"
+         else
+            failures=$((failures + 1))
+            krab_stdio_alert "$task FAILED"
+            if $fail_early; then
+                break
+            fi
+        fi
+    done
+
+    if [ $failures -eq 0 ]
+    then
+        krab_stdio_confirm "SUCCESS: $total PASSED."
+        return 0
+    else
+        krab_stdio_alert "ERROR: $failures OUT OF $total FAILED."
+        return 1
+    fi
+}

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+_krab_stdio_message() {
+    local message
+    message=$1
+    local highlight
+    highlight=$(( $2 + 40))
+    local normal
+    normal=$(( $2 + 30))
+    printf "\n\033[0;%dm  \033[0;1;%dm %s\033[0m\n\n" "$highlight" "$normal" "$message"
+}
+
+krab_stdio_state() {
+    local message
+    message=$1
+    _krab_stdio_message "$message" 7 1>&2
+}
+
+krab_stdio_inform() {
+    local message
+    message=$1
+    _krab_stdio_message "$message" 6 1>&2
+}
+
+krab_stdio_confirm() {
+    local message
+    message=$1
+    _krab_stdio_message "$message" 2 1>&2
+}
+
+krab_stdio_alert() {
+    local message
+    message=$1
+    _krab_stdio_message "$message" 1 1>&2
+}

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+krab_semver_components() {
+    local version
+    version=$1
+    krab_semver_validate "$version" || return 1
+    local components
+    components=(${version//\./ })
+    echo "${components[0]} ${components[0]}.${components[1]} $version"
+}
+
+krab_semver_validate() {
+    local version
+    version=$1
+    if [[ ! $version =~ ^[0-9]{1,}\.[0-9]{1,}\.[0-9]{1,}$ ]]; then
+        krab_stdio_alert "$version is not a valid Semantic Version (x.y.z). See https://semver.org/."
+        return 1
+    fi
+}
