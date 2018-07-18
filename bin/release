@@ -11,7 +11,7 @@ fi
 
 version="$1"
 
-./krab semver-validate "$version"
+./bin/krab semver-validate "$version"
 
 # Check this version does not already exist.
 if git tag | grep -q "^$version$"; then
@@ -28,7 +28,7 @@ fi
 ./bin/test
 
 # Push the release to Git.
-for tag in $(./krab semver-components "$version"); do
+for tag in $(./bin/krab semver-components "$version"); do
     git tag -f "$tag"
     git push origin "$tag"
 done

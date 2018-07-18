@@ -4,23 +4,23 @@ cd "$(dirname "$0")/.." || exit
 
 
 test_validate_should_validate_valid_version() {
-    ./krab semver-validate '1.2.3'
+    ./bin/krab semver-validate '1.2.3'
     assertEquals 0 "$?"
 }
 
 test_validate_should_not_validate_missing_component() {
-    ./krab semver-validate '1.2' &>/dev/null
+    ./bin/krab semver-validate '1.2' &>/dev/null
     assertEquals 1 "$?"
 }
 
 test_validate_should_not_validate_invalid_component() {
-    ./krab semver-validate '1.b.3' &>/dev/null
+    ./bin/krab semver-validate '1.b.3' &>/dev/null
     assertEquals 1 "$?"
 }
 
 test_components_should_return_components() {
     local actual
-    actual=$(./krab semver-components '1.2.3')
+    actual=$(./bin/krab semver-components '1.2.3')
     assertEquals 0 "$?"
     local expected
     expected='1 1.2 1.2.3'
@@ -28,7 +28,7 @@ test_components_should_return_components() {
 }
 
 test_components_should_fail_on_invalid_version() {
-    ./krab semver-components '1.2' &>/dev/null
+    ./bin/krab semver-components '1.2' &>/dev/null
     assertEquals 1 "$?"
 }
 
