@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd "$(dirname "$0")/.." || exit
+cd "$(dirname "$0")/../.." || exit
 
 test_state() {
     actual="$(./bin/krab stdio-state 'Hi, there!' 2>&1 > /dev/null)"
