@@ -2,9 +2,10 @@
 
 set -Eeuo pipefail
 
-. ./src/run
-. ./src/semver
-. ./src/stdio
+. ./src/bash/env
+. ./src/bash/run
+. ./src/bash/semver
+. ./src/bash/stdio
 
 # This is our main functionality, and exposes our public API as subcommands.
 if [ -z "${1:-}" ]; then

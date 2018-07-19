@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")/../.." || exit
+
+test_envsubst() {
+    local input
+    input=$(cat << 'EOF'
+
+Hi there, {{ USER }}!
+
+Have a nice day.
+
+EOF
+)
+    local expected
+    expected=$(cat << EOF
+
+Hi there, $USER!
+
+Have a nice day.
+
+EOF
+)
+    actual=$(echo "$input" | ./bin/krab envsubst)
+    assertEquals 0 "$?"
+    assertEquals "$expected" "$actual"
+}
+
+. ./vendor/shunit2/shunit2
