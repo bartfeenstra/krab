@@ -4,4 +4,4 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-find ./build | grep '^\./build/[^/]*' | xargs ./bin/krab run
+find ./build -type f -print0 | xargs -0 ./bin/krab run
