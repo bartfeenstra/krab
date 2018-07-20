@@ -11,14 +11,14 @@ $ ./bin/krab -h
 Usage: $ krab [OPTION] [COMMAND]
 
 COMMAND is one of:
-- envsubst
-- run
-- semver-components
-- semver-validate
-- stdio-alert
-- stdio-confirm
-- stdio-inform
-- stdio-state
+    - envsubst
+    - run
+    - semver-components
+    - semver-validate
+    - stdio-alert
+    - stdio-confirm
+    - stdio-inform
+    - stdio-state
 
 OPTION is one or more of the following:
     -h  Show this message.
