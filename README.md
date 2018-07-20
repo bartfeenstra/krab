@@ -8,7 +8,7 @@ Krab is a collection of shell functions that I find useful.
 
 ```bash
 $ ./bin/krab -h
-Usage: $ ...krab [OPTION] [COMMAND]
+Usage: $ krab [OPTION] [COMMAND]
 
 COMMAND is one of:
 - envsubst

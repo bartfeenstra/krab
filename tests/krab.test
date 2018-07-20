@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")/.." || exit
+
+. ./tests/assert
+
+test_run_common() {
+    assert_command ''
+}
+
+. ./vendor/shunit2/shunit2

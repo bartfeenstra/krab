@@ -8,7 +8,7 @@ krab_run() {
 
     fail_early=true
     usage=$(cat <<'EOF'
-Usage: $ ...run [OPTION]... [TASK]...
+Usage: $ krab run [OPTION]... [TASK]...
 
 TASK is one or more shell commands to run.
 

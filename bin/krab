@@ -11,7 +11,7 @@ usage() {
     local commands
     commands=$(declare -F | awk '{ print $3 }' | grep '^krab_.*' | sed 's/^krab_\(.*\)/\1/' | tr '_' '-' | awk '{ print "- "$1 }')
     cat << EOF
-Usage: $ ...krab [OPTION] [COMMAND]
+Usage: $ krab [OPTION] [COMMAND]
 
 COMMAND is one of:
 $commands
