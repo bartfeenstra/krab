@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
+_krab_run_usage() {
+    cat <<'EOF'
+Usage: $ krab run [OPTION]... [TASK]...
+
+TASK is one or more shell commands to run.
+
+OPTION is one or more of the following:
+    -l  Run all tasks, regardless of failures.
+    -h  Show this message.
+
+Examples:
+    ...run 'echo "This prints something"' 'unknown-command --this-should-fail' 'echo "This does not print anything"'
+    ...run -l 'echo "This prints something"' 'unknown-command --this-should-fail' 'echo "This also prints something"'
+EOF
+}
+
 krab_run() {
     local failures
     local fail_early
@@ -7,30 +23,17 @@ krab_run() {
     local total
 
     fail_early=true
-    usage=$(cat <<'EOF'
-Usage: $ krab run [OPTION]... [TASK]...
-
-TASK is one or more shell commands to run.
-
-OPTION is one or more of the following:
-    -l  Run all tasks, regardless of failures.
-
-Examples:
-    ...run 'echo "This prints something"' 'unknown-command --this-should-fail' 'echo "This does not print anything"'
-    ...run -l 'echo "This prints something"' 'unknown-command --this-should-fail' 'echo "This also prints something"'
-EOF
-)
     while getopts 'lh' option; do
         case "$option" in
             l)
                 fail_early=false
                 ;;
             h)
-                echo "$usage"
+                _krab_run_usage
                 exit 0
                 ;;
             ?)
-                echo "$usage"
+                _krab_run_usage
                 exit 2
                 ;;
         esac
