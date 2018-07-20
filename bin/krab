@@ -7,9 +7,9 @@ set -Eeuo pipefail
 . ./src/bash/semver
 . ./src/bash/stdio
 
-usage() {
+_usage() {
     local commands
-    commands=$(declare -F | awk '{ print $3 }' | grep '^krab_.*' | sed 's/^krab_\(.*\)/\1/' | tr '_' '-' | awk '{ print "- "$1 }')
+    commands=$(declare -F | awk '{ print $3 }' | grep '^krab_.*' | sed 's/^krab_\(.*\)/\1/' | tr '_' '-' | awk '{ print "    - "$1 }')
     cat << EOF
 Usage: $ krab [OPTION] [COMMAND]
 
@@ -24,11 +24,11 @@ EOF
 while getopts 'h' option; do
     case "$option" in
         h)
-            usage
+            _usage
             exit 0
             ;;
         ?)
-            usage
+            _usage
             exit 2
             ;;
     esac
