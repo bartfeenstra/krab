@@ -8,7 +8,7 @@ addons:
     - shellcheck
 
 before_script:
-  - ./bin/build
+  - ./bin/build-dev
 
 script:
   - ./bin/test
