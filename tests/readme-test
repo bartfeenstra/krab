@@ -15,7 +15,7 @@ $help
 EOF
 )
     if [[ ! $(cat ./README.md) == *"$expected"* ]]; then
-        fail "README.md does not contain an (up-to-date) example of a './bin/krab -h' invocation."
+        fail "README.md does not contain an (up-to-date) example of a '$cmd' invocation."
     fi
 }
 
