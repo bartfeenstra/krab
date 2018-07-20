@@ -2,6 +2,8 @@
 
 cd "$(dirname "$0")/../.." || exit
 
+. ./tests/assert
+
 test_run_single_command() {
     local expected
     local cmd
@@ -53,22 +55,8 @@ test_run_multiple_failed_commands_with_allowed_failures() {
     assertEquals "$expected" "$actual"
 }
 
-test_run_help() {
-    local actual
-
-    actual="$(./bin/krab run -h)"
-    assertEquals 0 $?
-    echo "$actual" | grep -i 'usage' &>/dev/null
-    assertEquals 0 $?
-}
-
-test_run_unknown_argument() {
-    local actual
-
-    actual="$(./bin/krab run -X)"
-    assertEquals 2 $?
-    echo "$actual" | grep -i 'usage' &>/dev/null
-    assertEquals 0 $?
+test_run_common() {
+    assert_command 'run'
 }
 
 . ./vendor/shunit2/shunit2

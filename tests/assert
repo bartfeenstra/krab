@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+assert_help() {
+    local help
+    help="$1"
+    echo "$help" | grep  'Usage: $ krab' &>/dev/null
+    assertEquals 0 $?
+}
+
+assert_command() {
+    local subcommand
+    subcommand=${1:-}
+    assert_command_help "$subcommand"
+    assert_command_incorrect_usage "$subcommand"
+}
+
+assert_command_help() {
+    local subcommand
+    subcommand=${1:-}
+    local actual
+    actual="$(eval "./bin/krab ""$subcommand"" -h")"
+    assertEquals 0 $?
+    assert_help "$actual"
+}
+
+assert_command_incorrect_usage() {
+    local subcommand
+    subcommand=${1:-}
+    local actual
+    actual="$(eval "./bin/krab ""$subcommand"" -X")"
+    assertEquals 2 $?
+    assert_help "$actual"
+}
