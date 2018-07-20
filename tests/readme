@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")/.." || exit
+
+
+test_readme_contains_help() {
+    local cmd
+    cmd='./bin/krab -h'
+    local help
+    help=$($cmd)
+    local expected
+    expected=$(cat <<EOF
+\$ $cmd
+$help
+EOF
+)
+    if [[ ! $(cat ./README.md) == *"$expected"* ]]; then
+        fail "README.md does not contain an (up-to-date) example of a './bin/krab -h' invocation."
+    fi
+}
+
+. ./vendor/shunit2/shunit2
