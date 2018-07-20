@@ -37,7 +37,7 @@ OPTION is one or more of the following:
 
 ### Building
 
-Run `./bin/build`.
+Run `./bin/build-dev`.
 
 ### Testing
 
