@@ -7,7 +7,34 @@ set -Eeuo pipefail
 . ./src/bash/semver
 . ./src/bash/stdio
 
-# This is our main functionality, and exposes our public API as subcommands.
+usage() {
+    local commands
+    commands=$(declare -F | awk '{ print $3 }' | grep '^krab_.*' | sed 's/^krab_\(.*\)/\1/' | tr '_' '-' | awk '{ print "- "$1 }')
+    cat << EOF
+Usage: $ ...krab [OPTION] [COMMAND]
+
+COMMAND is one of:
+$commands
+
+OPTION is one or more of the following:
+    -h  Show this message.
+EOF
+}
+
+while getopts 'h' option; do
+    case "$option" in
+        h)
+            usage
+            exit 0
+            ;;
+        ?)
+            usage
+            exit 2
+            ;;
+    esac
+done
+shift "$((OPTIND-1))"
+
 if [ -z "${1:-}" ]; then
     krab_stdio_alert "Missing subcommand."
     exit 2
