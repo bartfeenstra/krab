@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")/../.." || exit
+
+. ./tests/assert
+
+test_migrate_install_without_upgrades() {
+    local installation_dir
+    installation_dir="$(mktemp -d)/.krab"
+    local versions_dir
+    versions_dir=$(mktemp -d)
+    ./bin/krab migrate-install "$installation_dir" "$versions_dir"
+    assertEquals 0 "$(cat "$installation_dir/installed_version")"
+    rm -r "$installation_dir"
+    rm -r "$versions_dir"
+}
+
+test_migrate_install_with_upgrades() {
+    local installation_dir
+    installation_dir="$(mktemp -d)/.krab"
+    local versions_dir
+    versions_dir=$(mktemp -d)
+    touch "$versions_dir/001-foo"
+    touch "$versions_dir/123-foo"
+    touch "$versions_dir/666-foo"
+    ./bin/krab migrate-install "$installation_dir" "$versions_dir"
+    assertEquals 666 "$(cat "$installation_dir/installed_version")"
+    rm -r "$installation_dir"
+    rm -r "$versions_dir"
+}
+
+test_migrate_install_common() {
+    assert_command 'migrate-install'
+}
+
+test_migrate_upgrade_without_upgrades() {
+    fail "To-do."
+}
+
+test_migrate_upgrade_with_upgrades() {
+    fail "To-do."
+}
+
+test_migrate_upgrade_common() {
+    assert_command 'migrate-upgrade'
+}
+
+. ./vendor/shunit2/shunit2
