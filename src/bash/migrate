@@ -13,38 +13,40 @@ _krab_migrate_is_installed() {
 }
 
 _krab_migrate_all_versions() {
-    local versions_dir
-    versions_dir="$1"
+    local migrations_dir
+    migrations_dir="$1"
 
     echo 0
-    find "$versions_dir" -type f -print0 | xargs -0 --no-run-if-empty basename -a | sed -r "s/^([0-9]+)-.*/\1/"
+    find "$migrations_dir" -type f -print0 | xargs -0 --no-run-if-empty basename -a | grep -E '^[0-9]+-.*' | sed -r "s/^([0-9]+)-.*/\1/"
 }
 
 _krab_migrate_current_version() {
-    local versions_dir
-    versions_dir="$1"
+    local installation_dir
+    installation_dir="$1"
 
-    if is_installed "$versions_dir"; then
-        cat "$versions_dir/.krab/installed_version"
+    if _krab_migrate_is_installed "$installation_dir"; then
+        cat "$installation_dir/installed_version"
         return 0
     fi
     echo 0
 }
 
 _krab_migrate_latest_version() {
-    local versions_dir
-    versions_dir="$1"
+    local migrations_dir
+    migrations_dir="$1"
 
-    _krab_migrate_all_versions "$versions_dir" | tail -n 1
+    _krab_migrate_all_versions "$migrations_dir" | tail -n 1
 }
 
 _krab_migrate_available_versions() {
-    local versions_dir
-    versions_dir="$1"
+    local installation_dir
+    installation_dir="$1"
+    local migrations_dir
+    migrations_dir="$2"
 
     local current
-    current=$(_krab_migrate_current_version "$versions_dir")
-    for version in $(_krab_migrate_all_versions "$versions_dir"); do
+    current=$(_krab_migrate_current_version "$installation_dir")
+    for version in $(_krab_migrate_all_versions "$migrations_dir"); do
         if [[ "$version" -gt "$current" ]]; then
             echo "$version"
         fi
@@ -53,10 +55,10 @@ _krab_migrate_available_versions() {
 
 _krab_migrate_install_usage() {
     cat <<'EOF'
-Usage: $ krab migrate-install [OPTION]... [INSTALLATION_DIR] [VERSIONS_DIR]
+Usage: $ krab migrate-install [OPTION]... [INSTALLATION_DIR] [MIGRATIONS_DIR]
 
 INSTALLATION_DIR is the directory in which the installation is tracked.
-VERSIONS_DIR is the directory that contains the upgrade versions.
+MIGRATIONS_DIR is the directory that contains the migrations.
 
 OPTION is one or more of the following:
     -h  Show this message.
@@ -80,24 +82,24 @@ krab_migrate_install() {
 
     local installation_dir
     installation_dir="$1"
-    local versions_dir
-    versions_dir="$2"
+    local migrations_dir
+    migrations_dir="$2"
 
     if _krab_migrate_is_installed "$installation_dir"; then
-        ./vendor/bin/krab stdio-alert 'The application has been installed already.'
+        ./bin/krab stdio-alert 'The application has been installed already.'
         exit 2
     fi
 
     mkdir -p "$installation_dir"
-    _krab_migrate_latest_version "$versions_dir" > "$installation_dir/installed_version"
+    _krab_migrate_latest_version "$migrations_dir" > "$installation_dir/installed_version"
 }
 
 _krab_migrate_upgrade_usage() {
     cat <<'EOF'
-Usage: $ krab migrate-upgrade [OPTION]... [INSTALLATION_DIR] [VERSIONS_DIR]
+Usage: $ krab migrate-upgrade [OPTION]... [INSTALLATION_DIR] [MIGRATIONS_DIR]
 
 INSTALLATION_DIR is the directory in which the installation is tracked.
-VERSIONS_DIR is the directory that contains the upgrade versions.
+MIGRATIONS_DIR is the directory that contains the upgrades.
 
 OPTION is one or more of the following:
     -h  Show this message.
@@ -121,17 +123,18 @@ krab_migrate_upgrade() {
 
     local installation_dir
     installation_dir="$1"
-    local versions_dir
-    versions_dir="$2"
+    local migrations_dir
+    migrations_dir="$2"
 
-    if ! _krab_migrate_is_installed; then
-        ./vendor/bin/krab stdio-alert 'The application has not been installed yet.'
+    if ! _krab_migrate_is_installed "$installation_dir"; then
+        ./bin/krab stdio-alert 'The application has not been installed yet.'
         exit 2
     fi
+
     while read -r version; do
-        upgrade="$(ls ./upgrades/"$version"-*)"
-        ./vendor/bin/krab stdio-inform "Running upgrade $upgrade..."
+        upgrade="$(ls "$migrations_dir/$version"-*)"
+        ./bin/krab stdio-inform "Running upgrade $upgrade..."
         $upgrade
-        echo "$version" > ./data/.installed_version
-    done < <(available_versions)
+        echo "$version" > "$installation_dir/installed_version"
+    done < <(_krab_migrate_available_versions "$installation_dir" "$migrations_dir")
 }
