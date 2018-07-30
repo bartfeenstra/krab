@@ -30,5 +30,5 @@ fi
 # Push the release to Git.
 for tag in $(./bin/krab semver-components "$version"); do
     git tag -f "$tag"
-    git push origin "$tag"
+    git push -f origin "$tag"
 done
