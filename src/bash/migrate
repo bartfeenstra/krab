@@ -131,10 +131,10 @@ krab_migrate_upgrade() {
         exit 2
     fi
 
+    local tasks=""
     while read -r version; do
         upgrade="$(ls "$migrations_dir/$version"-*)"
-        ./bin/krab stdio-inform "Running upgrade $upgrade..."
-        $upgrade
-        echo "$version" > "$installation_dir/installed_version"
+        tasks="$tasks$upgrade\0echo $version > $installation_dir/installed_version\0"
     done < <(_krab_migrate_available_versions "$installation_dir" "$migrations_dir")
+    echo -e "$tasks" | xargs -0 ./bin/krab run -l
 }
