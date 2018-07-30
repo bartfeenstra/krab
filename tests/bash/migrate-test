@@ -68,12 +68,13 @@ test_migrate_upgrade_with_upgrades() {
     mkdir -p "$installation_dir"
     echo 0 > "$installation_dir/installed_version"
     echo "echo FOO >> $output_file" > "$migrations_dir/001-foo"
-    echo "echo BAR >> $output_file" > "$migrations_dir/123-bar"
-    echo "echo BAZ >> $output_file" > "$migrations_dir/666-baz"
+    echo "echo BAR >> $output_file" > "$migrations_dir/1-bar"
+    echo "echo BAZ >> $output_file" > "$migrations_dir/123-baz"
+    echo "echo QUX >> $output_file" > "$migrations_dir/666-qux"
     chmod -R u+x $migrations_dir/*
     ./bin/krab migrate-upgrade "$installation_dir" "$migrations_dir" &>/dev/null
     assertEquals 666 "$(cat "$installation_dir/installed_version")"
-    assertEquals "$(printf 'FOO\nBAR\nBAZ\n')" "$(cat "$output_file")"
+    assertEquals "$(printf 'FOO\nBAR\nBAZ\nQUX\n')" "$(cat "$output_file")"
     rm -rf "$installation_dir"
     rm -rf "$migrations_dir"
 }

@@ -4,4 +4,4 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-find ./tests -type f -name '*-test' -print0 | xargs -0 ./bin/krab run -l
+find ./tests -type f -name '*-test' -print0 | sort -z | xargs -0 ./bin/krab run -l
