@@ -27,7 +27,7 @@ assert_command_incorrect_usage() {
     local subcommand
     subcommand=${1:-}
     local actual
-    actual="$(eval "./bin/krab ""$subcommand"" -X")"
+    actual="$(eval "./bin/krab ""$subcommand"" -X" 2>/dev/null)"
     assertEquals 2 $?
     assert_help "$actual"
 }
