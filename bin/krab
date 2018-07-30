@@ -2,6 +2,8 @@
 
 set -Eeuo pipefail
 
+cd "$(dirname "$0")/.."
+
 . ./src/bash/env
 . ./src/bash/migrate
 . ./src/bash/run

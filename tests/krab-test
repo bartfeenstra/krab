@@ -4,8 +4,17 @@ cd "$(dirname "$0")/.." || exit
 
 . ./tests/assert
 
-test_run_common() {
+test_krab_common() {
     assert_command ''
+}
+
+test_krab_arbitrary_pwd() {
+    local krab_dir
+    krab_dir=$(pwd)
+    pushd "$(mktemp -d)"
+    eval "$krab_dir/bin/krab -h" &>/dev/null
+    assertEquals 0 "$?"
+    popd
 }
 
 . ./vendor/shunit2/shunit2
