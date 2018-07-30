@@ -136,5 +136,5 @@ krab_migrate_upgrade() {
         upgrade="$(ls "$migrations_dir/$version"-*)"
         tasks="$tasks$upgrade\0echo $version > $installation_dir/installed_version\0"
     done < <(_krab_migrate_available_versions "$installation_dir" "$migrations_dir")
-    echo -e "$tasks" | xargs -0 ./bin/krab run -l
+    echo -e "$tasks" | xargs -0 ./bin/krab run
 }

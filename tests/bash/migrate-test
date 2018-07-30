@@ -10,7 +10,7 @@ test_migrate_install_without_upgrades() {
     local migrations_dir
     migrations_dir=$(mktemp -d)
     ./bin/krab migrate-install "$installation_dir" "$migrations_dir" &>/dev/null
-    assertEquals 0 "$(cat "$installation_dir/installed_version")"
+    assertEquals '0' "$(cat "$installation_dir/installed_version")"
     rm -rf "$installation_dir"
     rm -rf "$migrations_dir"
 }
@@ -24,7 +24,7 @@ test_migrate_install_with_upgrades() {
     touch "$migrations_dir/123-foo"
     touch "$migrations_dir/666-foo"
     ./bin/krab migrate-install "$installation_dir" "$migrations_dir" &>/dev/null
-    assertEquals 666 "$(cat "$installation_dir/installed_version")"
+    assertEquals '666' "$(cat "$installation_dir/installed_version")"
     rm -rf "$installation_dir"
     rm -rf "$migrations_dir"
 }
@@ -73,8 +73,29 @@ test_migrate_upgrade_with_upgrades() {
     echo "echo QUX >> $output_file" > "$migrations_dir/666-qux"
     chmod -R u+x $migrations_dir/*
     ./bin/krab migrate-upgrade "$installation_dir" "$migrations_dir" &>/dev/null
-    assertEquals 666 "$(cat "$installation_dir/installed_version")"
+    assertEquals '666' "$(cat "$installation_dir/installed_version")"
     assertEquals "$(printf 'FOO\nBAR\nBAZ\nQUX\n')" "$(cat "$output_file")"
+    rm -rf "$installation_dir"
+    rm -rf "$migrations_dir"
+}
+
+test_migrate_upgrade_with_failed_upgrades() {
+    local installation_dir
+    installation_dir="$(mktemp -d)/.krab"
+    local migrations_dir
+    migrations_dir=$(mktemp -d)
+    output_file=$(mktemp)
+    mkdir -p "$installation_dir"
+    echo 0 > "$installation_dir/installed_version"
+    echo "echo FOO >> $output_file" > "$migrations_dir/001-foo"
+    echo "echo BAR >> $output_file" > "$migrations_dir/1-bar"
+    echo "exit 1" > "$migrations_dir/123-baz"
+    echo "echo QUX >> $output_file" > "$migrations_dir/666-qux"
+    chmod -R u+x $migrations_dir/*
+    ./bin/krab migrate-upgrade "$installation_dir" "$migrations_dir" &>/dev/null
+    assertNotEquals 0 "$?"
+    assertEquals '1' "$(cat "$installation_dir/installed_version")"
+    assertEquals "$(printf 'FOO\nBAR\n')" "$(cat "$output_file")"
     rm -rf "$installation_dir"
     rm -rf "$migrations_dir"
 }
