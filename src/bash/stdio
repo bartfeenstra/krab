@@ -7,7 +7,7 @@ _krab_stdio_message() {
     highlight=$(( $2 + 40))
     local normal
     normal=$(( $2 + 30))
-    printf "\n\033[0;%dm  \033[0;1;%dm %s\033[0m\n\n" "$highlight" "$normal" "$message"
+    printf "\033[0;%dm  \033[0;1;%dm %s\033[0m\n" "$highlight" "$normal" "$message"
 }
 
 krab_stdio_state() {
