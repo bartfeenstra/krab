@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")/../.." || exit
+
+. ./tests/assert
+
+test_migrate_install_without_upgrades() {
+    local installation_dir
+    installation_dir="$(mktemp -d)/.krab"
+    local migrations_dir
+    migrations_dir=$(mktemp -d)
+    ./bin/krab migrate-install "$installation_dir" "$migrations_dir" &>/dev/null
+    assertEquals 0 "$(cat "$installation_dir/installed_version")"
+    rm -rf "$installation_dir"
+    rm -rf "$migrations_dir"
+}
+
+test_migrate_install_with_upgrades() {
+    local installation_dir
+    installation_dir="$(mktemp -d)/.krab"
+    local migrations_dir
+    migrations_dir=$(mktemp -d)
+    touch "$migrations_dir/001-foo"
+    touch "$migrations_dir/123-foo"
+    touch "$migrations_dir/666-foo"
+    ./bin/krab migrate-install "$installation_dir" "$migrations_dir" &>/dev/null
+    assertEquals 666 "$(cat "$installation_dir/installed_version")"
+    rm -rf "$installation_dir"
+    rm -rf "$migrations_dir"
+}
+
+test_migrate_install_already_installed() {
+    local installation_dir
+    installation_dir="$(mktemp -d)/.krab"
+    local migrations_dir
+    migrations_dir=$(mktemp -d)
+    mkdir -p "$installation_dir"
+    echo 0 > "$installation_dir/installed_version"
+    ./bin/krab migrate-install "$installation_dir" "$migrations_dir" &>/dev/null
+    assertEquals 2 "$?"
+    rm -rf "$installation_dir"
+    rm -rf "$migrations_dir"
+}
+
+test_migrate_install_common() {
+    assert_command 'migrate-install'
+}
+
+test_migrate_upgrade_without_upgrades() {
+    local installation_dir
+    installation_dir="$(mktemp -d)/.krab"
+    local migrations_dir
+    migrations_dir=$(mktemp -d)
+    mkdir -p "$installation_dir"
+    echo 0 > "$installation_dir/installed_version"
+    ./bin/krab migrate-upgrade "$installation_dir" "$migrations_dir" &>/dev/null
+    assertEquals 0 "$?"
+    rm -rf "$installation_dir"
+    rm -rf "$migrations_dir"
+}
+
+test_migrate_upgrade_with_upgrades() {
+    local installation_dir
+    installation_dir="$(mktemp -d)/.krab"
+    local migrations_dir
+    migrations_dir=$(mktemp -d)
+    output_file=$(mktemp)
+    mkdir -p "$installation_dir"
+    echo 0 > "$installation_dir/installed_version"
+    echo "echo FOO >> $output_file" > "$migrations_dir/001-foo"
+    echo "echo BAR >> $output_file" > "$migrations_dir/123-bar"
+    echo "echo BAZ >> $output_file" > "$migrations_dir/666-baz"
+    chmod -R u+x $migrations_dir/*
+    ./bin/krab migrate-upgrade "$installation_dir" "$migrations_dir" &>/dev/null
+    assertEquals 666 "$(cat "$installation_dir/installed_version")"
+    assertEquals "$(printf 'FOO\nBAR\nBAZ\n')" "$(cat "$output_file")"
+    rm -rf "$installation_dir"
+    rm -rf "$migrations_dir"
+}
+
+test_migrate_install_not_yet_installed() {
+    local installation_dir
+    installation_dir="$(mktemp -d)/.krab"
+    local migrations_dir
+    migrations_dir=$(mktemp -d)
+    ./bin/krab migrate-upgrade "$installation_dir" "$migrations_dir" &>/dev/null
+    assertEquals 2 "$?"
+    rm -rf "$installation_dir"
+    rm -rf "$migrations_dir"
+}
+
+test_migrate_upgrade_common() {
+    assert_command 'migrate-upgrade'
+}
+
+. ./vendor/shunit2/shunit2

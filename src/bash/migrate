@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+
+_krab_migrate_is_installed() {
+    local installation_dir
+    installation_dir="$1"
+
+    # Check for an installation manifest.
+    if [ -f "$installation_dir/installed_version" ]; then
+        return 0
+    fi
+
+    return 1
+}
+
+_krab_migrate_all_versions() {
+    local migrations_dir
+    migrations_dir="$1"
+
+    echo 0
+    find "$migrations_dir" -type f -print0 | xargs -0 --no-run-if-empty basename -a | grep -E '^[0-9]+-.*' | sed -r "s/^([0-9]+)-.*/\1/" | sort -n
+}
+
+_krab_migrate_current_version() {
+    local installation_dir
+    installation_dir="$1"
+
+    if _krab_migrate_is_installed "$installation_dir"; then
+        cat "$installation_dir/installed_version"
+        return 0
+    fi
+    echo 0
+}
+
+_krab_migrate_latest_version() {
+    local migrations_dir
+    migrations_dir="$1"
+
+    _krab_migrate_all_versions "$migrations_dir" | tail -n 1
+}
+
+_krab_migrate_available_versions() {
+    local installation_dir
+    installation_dir="$1"
+    local migrations_dir
+    migrations_dir="$2"
+
+    local current
+    current=$(_krab_migrate_current_version "$installation_dir")
+    for version in $(_krab_migrate_all_versions "$migrations_dir"); do
+        if [[ "$version" -gt "$current" ]]; then
+            echo "$version"
+        fi
+    done
+}
+
+_krab_migrate_install_usage() {
+    cat <<'EOF'
+Usage: $ krab migrate-install [OPTION]... [INSTALLATION_DIR] [MIGRATIONS_DIR]
+
+INSTALLATION_DIR is the directory in which the installation is tracked.
+MIGRATIONS_DIR is the directory that contains the migrations.
+
+OPTION is one or more of the following:
+    -h  Show this message.
+EOF
+}
+
+krab_migrate_install() {
+    while getopts 'h' option; do
+        case "$option" in
+            h)
+                _krab_migrate_install_usage
+                exit 0
+                ;;
+            ?)
+                _krab_migrate_install_usage
+                exit 2
+                ;;
+        esac
+    done
+    shift "$((OPTIND-1))"
+
+    local installation_dir
+    installation_dir="$1"
+    local migrations_dir
+    migrations_dir="$2"
+
+    if _krab_migrate_is_installed "$installation_dir"; then
+        ./bin/krab stdio-alert 'The application has been installed already.'
+        exit 2
+    fi
+
+    mkdir -p "$installation_dir"
+    _krab_migrate_latest_version "$migrations_dir" > "$installation_dir/installed_version"
+}
+
+_krab_migrate_upgrade_usage() {
+    cat <<'EOF'
+Usage: $ krab migrate-upgrade [OPTION]... [INSTALLATION_DIR] [MIGRATIONS_DIR]
+
+INSTALLATION_DIR is the directory in which the installation is tracked.
+MIGRATIONS_DIR is the directory that contains the upgrades.
+
+OPTION is one or more of the following:
+    -h  Show this message.
+EOF
+}
+
+krab_migrate_upgrade() {
+    while getopts 'h' option; do
+        case "$option" in
+            h)
+                _krab_migrate_upgrade_usage
+                exit 0
+                ;;
+            ?)
+                _krab_migrate_upgrade_usage
+                exit 2
+                ;;
+        esac
+    done
+    shift "$((OPTIND-1))"
+
+    local installation_dir
+    installation_dir="$1"
+    local migrations_dir
+    migrations_dir="$2"
+
+    if ! _krab_migrate_is_installed "$installation_dir"; then
+        ./bin/krab stdio-alert 'The application has not been installed yet.'
+        exit 2
+    fi
+
+    while read -r version; do
+        upgrade="$(ls "$migrations_dir/$version"-*)"
+        ./bin/krab stdio-inform "Running upgrade $upgrade..."
+        $upgrade
+        echo "$version" > "$installation_dir/installed_version"
+    done < <(_krab_migrate_available_versions "$installation_dir" "$migrations_dir")
+}

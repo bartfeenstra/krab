@@ -3,6 +3,7 @@
 set -Eeuo pipefail
 
 . ./src/bash/env
+. ./src/bash/migrate
 . ./src/bash/run
 . ./src/bash/semver
 . ./src/bash/stdio
