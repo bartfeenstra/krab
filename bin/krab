@@ -3,11 +3,13 @@
 set -Eeuo pipefail
 
 pushd "$(dirname "$0")/.." &>/dev/null
+set -a
 . ./src/bash/env
 . ./src/bash/migrate
 . ./src/bash/run
 . ./src/bash/semver
 . ./src/bash/stdio
+set +a
 popd &>/dev/null
 
 _usage() {
