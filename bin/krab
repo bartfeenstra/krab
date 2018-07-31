@@ -2,13 +2,13 @@
 
 set -Eeuo pipefail
 
-cd "$(dirname "$0")/.."
-
+pushd "$(dirname "$0")/.." &>/dev/null
 . ./src/bash/env
 . ./src/bash/migrate
 . ./src/bash/run
 . ./src/bash/semver
 . ./src/bash/stdio
+popd &>/dev/null
 
 _usage() {
     local commands
