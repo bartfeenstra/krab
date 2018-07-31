@@ -86,7 +86,7 @@ krab_migrate_install() {
     migrations_dir="$2"
 
     if _krab_migrate_is_installed "$installation_dir"; then
-        ./bin/krab stdio-alert 'The application has been installed already.'
+        krab_stdio_alert 'The application has been installed already.'
         exit 2
     fi
 
@@ -127,7 +127,7 @@ krab_migrate_upgrade() {
     migrations_dir="$2"
 
     if ! _krab_migrate_is_installed "$installation_dir"; then
-        ./bin/krab stdio-alert 'The application has not been installed yet.'
+        krab_stdio_alert 'The application has not been installed yet.'
         exit 2
     fi
 
@@ -136,5 +136,5 @@ krab_migrate_upgrade() {
         upgrade="$(ls "$migrations_dir/$version"-*)"
         tasks="$tasks$upgrade\0echo $version > $installation_dir/installed_version\0"
     done < <(_krab_migrate_available_versions "$installation_dir" "$migrations_dir")
-    echo -e "$tasks" | xargs -0 ./bin/krab run
+    echo -e "$tasks" | xargs -0 bash -c 'krab_run "$@"' _
 }
