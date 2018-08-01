@@ -46,6 +46,11 @@ krab_run() {
     failures=0
     last=0
 
+    if [ "$#" -eq 0 ]; then
+        krab_stdio_inform "NO TASKS TO RUN"
+        return 0
+    fi
+
     for task in "$@"; do
         last=$((last + 1))
         krab_stdio_state "Running $task..."
