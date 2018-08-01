@@ -4,7 +4,19 @@ cd "$(dirname "$0")/../.." || exit
 
 . ./tests/assert
 
-test_run_single_command() {
+test_run_no_tasks() {
+    local expected
+    local actual
+
+    actual="$(./bin/krab run 2>&1)"
+    assertEquals 0 "$?"
+    expected='NO TASKS TO RUN'
+    if [[ ! "$actual" == *"$expected"* ]]; then
+        fail "The command does not output '$expected'"
+    fi
+}
+
+test_run_single_task() {
     local expected
     local cmd
     local actual
@@ -15,12 +27,12 @@ test_run_single_command() {
     assertEquals "$expected" "$actual"
 }
 
-test_run_single_failed_command() {
+test_run_single_failed_task() {
     ./bin/krab run 'foo-bar --baz --qux' 2>/dev/null
     assertNotEquals 0 "$?"
 }
 
-test_run_multiple_commands() {
+test_run_multiple_tasks() {
     local expected1
     local expected2
     local actual
@@ -32,7 +44,7 @@ test_run_multiple_commands() {
     assertEquals "$expected" "$actual"
 }
 
-test_run_multiple_failed_commands() {
+test_run_multiple_failed_tasks() {
     local expected1
     local expected2
     local actual
@@ -43,7 +55,7 @@ test_run_multiple_failed_commands() {
     assertEquals "$expected1" "$actual"
 }
 
-test_run_multiple_failed_commands_with_allowed_failures() {
+test_run_multiple_failed_tasks_with_allowed_failures() {
     local expected1
     local expected2
     local actual
