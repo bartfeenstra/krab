@@ -12,8 +12,7 @@ Usage: $ krab [OPTION] [COMMAND]
 
 COMMAND is one of:
     - envsubst
-    - migrate-install
-    - migrate-upgrade
+    - migrate
     - run
     - semver-components
     - semver-validate
