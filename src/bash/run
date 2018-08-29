@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 
+_krab_run_format_nanoseconds() {
+    local duration
+    duration=$1
+    milli_duration=$((duration/ 1000000))
+    if [ $milli_duration -lt 1000 ]; then
+        milli_duration="0$milli_duration"
+    fi
+    echo "${milli_duration::-3}.${milli_duration:(-3)} second(s)"
+}
+
 _krab_run_usage() {
     cat <<'EOF'
 Usage: $ krab run [OPTION]... [TASK]...
@@ -21,6 +31,10 @@ krab_run() {
     local fail_early
     local last
     local total
+    local task_start
+    local task_duration
+    local tasks_duration
+    tasks_duration=0
 
     fail_early=true
     while getopts 'lh' option; do
@@ -54,24 +68,28 @@ krab_run() {
     for task in "$@"; do
         last=$((last + 1))
         krab_stdio_state "Running $task..."
+        task_start=$(date '+%s%N')
         if eval "$task"; then
-            krab_stdio_confirm "$task PASSED"
+            task_duration=$(($(date '+%s%N') - task_start ))
+            krab_stdio_confirm "$task PASSED in $(_krab_run_format_nanoseconds $task_duration)."
          else
+            task_duration=$(($(date '+%s%N') - task_start ))
             failures=$((failures + 1))
-            krab_stdio_alert "$task FAILED"
+            krab_stdio_alert "$task FAILED in $(_krab_run_format_nanoseconds $task_duration)."
             if $fail_early; then
                 break
             fi
         fi
+        tasks_duration=$((tasks_duration + task_duration))
     done
 
     if [ $failures -eq 0 ]
     then
-        krab_stdio_confirm "SUCCESS: $total PASSED."
+        krab_stdio_confirm "SUCCESS: $total PASSED in $(_krab_run_format_nanoseconds $tasks_duration)."
         return 0
     else
         local message
-        message="ERROR: $failures OUT OF $total FAILED."
+        message="ERROR: $failures OUT OF $total FAILED in $(_krab_run_format_nanoseconds $tasks_duration)."
         if [ $last -lt "$total" ]; then
             message="$message $((last - 1)) PASSED. $((total - last)) SKIPPED."
         fi
