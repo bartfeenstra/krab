@@ -18,13 +18,6 @@ _krab_migrate_current_version() {
     echo -1
 }
 
-_krab_migrate_latest_version() {
-    local migrations_dir
-    migrations_dir="$1"
-
-    _krab_migrate_all_versions "$migrations_dir" | tail -n 1
-}
-
 _krab_migrate_available_versions() {
     local installation_dir
     installation_dir="$1"
