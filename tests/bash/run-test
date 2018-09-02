@@ -5,7 +5,7 @@ cd "$(dirname "$0")/../.." || exit
 . ./tests/assert
 . ./src/bash/run
 
-test_krab_run_format_nanoseconds() {
+test_krab_run_format_nanoseconds_high() {
     local expected
     local actual
     local duration
@@ -14,6 +14,18 @@ test_krab_run_format_nanoseconds() {
     actual="$(_krab_run_format_nanoseconds $duration)"
     assertEquals 0 "$?"
     expected='12.756 second(s)'
+    assertEquals "$expected" "$actual"
+}
+
+test_krab_run_format_nanoseconds_low() {
+    local expected
+    local actual
+    local duration
+
+    duration=1275679
+    actual="$(_krab_run_format_nanoseconds $duration)"
+    assertEquals 0 "$?"
+    expected='0.001 second(s)'
     assertEquals "$expected" "$actual"
 }
 
