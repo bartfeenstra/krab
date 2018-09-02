@@ -3,10 +3,7 @@
 _krab_run_format_nanoseconds() {
     local duration
     duration=$1
-    milli_duration=$((duration/ 1000000))
-    if [ $milli_duration -lt 1000 ]; then
-        milli_duration="0$milli_duration"
-    fi
+    milli_duration=$(printf "%04d\n" $((duration/ 1000000)))
     echo "${milli_duration::-3}.${milli_duration:(-3)} second(s)"
 }
 
