@@ -12,9 +12,9 @@ test_krab_time_without_iterations() {
     actual="$(./bin/krab time sleep 1 2>&1)"
     assertEquals 0 "$?"
     expected='Average run times across 1 iteration(s):
-Real: 1.000 seconds
-User: 0.000 seconds
-Sys: 0.000 seconds'
+Real:	1.000 second(s)
+User:	0.000 second(s)
+Sys:	0.000 second(s)'
     if [[ ! "$actual" == *"$expected"* ]]; then
         fail "The command does not output '$expected'"
     fi
@@ -27,9 +27,9 @@ test_krab_time_with_iterations() {
     actual="$(./bin/krab time -i 3 sleep 1 2>&1)"
     assertEquals 0 "$?"
     expected='Average run times across 3 iteration(s):
-Real: 1.000 seconds
-User: 0.000 seconds
-Sys: 0.000 seconds'
+Real:	1.000 second(s)
+User:	0.000 second(s)
+Sys:	0.000 second(s)'
     if [[ ! "$actual" == *"$expected"* ]]; then
         fail "The command does not output '$expected'"
     fi

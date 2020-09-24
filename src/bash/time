@@ -43,5 +43,5 @@ krab_time() {
       /usr/bin/time -f "%e %U %S" -a -o /tmp/krab-time.$$ "$@"
     done
 
-    awk '{ et += $1; ut += $2; st += $3; iterations++ } END { printf "Average run times across " iterations " iteration(s):\nReal: %.3f seconds\nUser: %.3f seconds\nSys: %.3f seconds\n", et/iterations, ut/iterations, st/iterations }' /tmp/krab-time.$$
+    awk -f ./src/awk/time.awk /tmp/krab-time.$$
 }
