@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -Euo pipefail
+
 assert_help() {
     local help
     help="$1"
