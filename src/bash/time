@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+_krab_time_usage() {
+    cat <<'EOF'
+Usage: $ krab time [OPTION]... [TASK]...
+
+TASK is a shell command to run.
+
+OPTION is one or more of the following:
+    -i  The number of iterations to perform. The reported times are averaged.
+    -h  Show this message.
+
+Examples:
+    ...time 'sleep 9'
+    ...time -i 3 'sleep 9'
+EOF
+}
+
+krab_time() {
+    local iterations=1
+
+    while getopts 'i:h' option; do
+        case "$option" in
+            i)
+                iterations=${OPTARG}
+                ;;
+            h)
+                _krab_time_usage
+                exit 0
+                ;;
+            ?)
+                _krab_time_usage
+                exit 2
+                ;;
+        esac
+    done
+    shift "$((OPTIND-1))"
+
+    rm -f /tmp/krab-time.$$
+
+    for _ in $(seq "$iterations")
+    do
+      /usr/bin/time -f "%e %U %S" -a -o /tmp/krab-time.$$ "$@"
+    done
+
+    awk -f ./src/awk/time.awk /tmp/krab-time.$$
+}

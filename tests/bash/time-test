@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")/../.." || exit
+
+. ./tests/assert
+. ./src/bash/run
+
+test_krab_time_without_iterations() {
+    local expected
+    local actual
+
+    actual="$(./bin/krab time sleep 1 2>&1)"
+    assertEquals 0 "$?"
+    expected='Average run times across 1 iteration(s):
+Real:	1.000 second(s)
+User:	0.000 second(s)
+Sys:	0.000 second(s)'
+    if [[ ! "$actual" == *"$expected"* ]]; then
+        fail "The command does not output '$expected'"
+    fi
+}
+
+test_krab_time_with_iterations() {
+    local expected
+    local actual
+
+    actual="$(./bin/krab time -i 3 sleep 1 2>&1)"
+    assertEquals 0 "$?"
+    expected='Average run times across 3 iteration(s):
+Real:	1.000 second(s)
+User:	0.000 second(s)
+Sys:	0.000 second(s)'
+    if [[ ! "$actual" == *"$expected"* ]]; then
+        fail "The command does not output '$expected'"
+    fi
+}
+
+test_run_common() {
+    assert_command 'time'
+}
+
+. ./vendor/shunit2/shunit2
