@@ -43,5 +43,5 @@ krab_time() {
       /usr/bin/time -f "%e %U %S" -a -o /tmp/krab-time.$$ "$@"
     done
 
-    awk -f ./src/awk/time.awk /tmp/krab-time.$$
+    awk -f "$KRAB_PWD/src/awk/time.awk" /tmp/krab-time.$$
 }

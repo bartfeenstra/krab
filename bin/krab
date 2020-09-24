@@ -3,6 +3,10 @@
 set -Eeuo pipefail
 
 pushd "$(dirname "$0")/.." &>/dev/null
+
+KRAB_PWD=$(pwd)
+export KRAB_PWD
+
 set -a
 . ./src/bash/env
 . ./src/bash/migrate
@@ -11,6 +15,7 @@ set -a
 . ./src/bash/stdio
 . ./src/bash/time
 set +a
+
 popd &>/dev/null
 
 _usage() {
