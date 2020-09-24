@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -Euo pipefail
+
 cd "$(dirname "$0")/.." || exit
 
 . ./tests/assert
@@ -11,10 +13,10 @@ test_krab_common() {
 test_krab_arbitrary_pwd() {
     local krab_dir
     krab_dir=$(pwd)
-    pushd "$(mktemp -d)"
+    pushd "$(mktemp -d)" || return
     eval "$krab_dir/bin/krab -h" &>/dev/null
     assertEquals 0 "$?"
-    popd
+    popd || return
 }
 
 . ./vendor/shunit2/shunit2

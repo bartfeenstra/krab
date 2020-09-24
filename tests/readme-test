@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-cd "$(dirname "$0")/.." || exit
+set -Euo pipefail
 
+cd "$(dirname "$0")/.." || exit
 
 test_readme_contains_help() {
     local cmd
