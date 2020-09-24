@@ -9,6 +9,7 @@ set -a
 . ./src/bash/run
 . ./src/bash/semver
 . ./src/bash/stdio
+. ./src/bash/time
 set +a
 popd &>/dev/null
 
