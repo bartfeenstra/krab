@@ -14,6 +14,7 @@ assert_command() {
     subcommand=${1:-}
     assert_command_help "$subcommand"
     assert_command_incorrect_usage "$subcommand"
+    assert_command_arbitrary_pwd "$subcommand"
 }
 
 assert_command_help() {
@@ -32,4 +33,14 @@ assert_command_incorrect_usage() {
     actual="$(eval "./bin/krab ""$subcommand"" -X" 2>/dev/null)"
     assertEquals 2 $?
     assert_help "$actual"
+}
+
+assert_command_arbitrary_pwd() {
+    local subcommand
+    subcommand=${1:-}
+    local actual
+    pushd /tmp || exit
+    actual="$(eval "./bin/krab ""$subcommand"" -h")"
+    popd || exit
+    assertEquals 0 $?
 }

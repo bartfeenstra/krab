@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 krab_envsubst() {
-    awk -f ./src/awk/envsubst.awk <&0
+    awk -f "$KRAB_PWD/src/awk/envsubst.awk" <&0
 }

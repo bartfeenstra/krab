@@ -2,6 +2,9 @@
 
 cd "$(dirname "$0")/../.." || exit
 
+KRAB_PWD=$(pwd)
+export KRAB_PWD
+
 . ./tests/assert
 . ./src/bash/run
 
@@ -35,7 +38,7 @@ Sys:	0.000 second(s)'
     fi
 }
 
-test_run_common() {
+test_krab_time_common() {
     assert_command 'time'
 }
 
