@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-cd "$(dirname "$0")/../.." || exit
+set -Euo pipefail
 
+cd "$(dirname "$0")/../.." || exit
 
 test_validate_should_validate_valid_version() {
     ./bin/krab semver-validate '1.2.3'
